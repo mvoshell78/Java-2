@@ -3,32 +3,29 @@ package com.example.mich.voshell_fundamentals;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.apache.commons.io.IOUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
-public class MainActivity extends AppCompatActivity implements onDataItemClickListener {
+public class MainActivity extends AppCompatActivity implements onDataItemClickListener,getApiDataPasser {
 
     locationObject latLong;
     String city;
     EditText searchText;
+    Context context;
+    Boolean trueFalse;
+
+
+    String[] data = {"Dover", "Smyrna", "Camden", "Newark", "Laurel"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +39,44 @@ public class MainActivity extends AppCompatActivity implements onDataItemClickLi
 
         // calls the function to check if were connected
         isOnline();
+       trueFalse = true;
 
+
+
+    }
+
+    public void onDeleteClick(View view){
+        deleteData();
+    }
+
+    public void onPrefClick(View view){
+
+
+
+        if (trueFalse == true){
+            trueFalse = false;
+            SettingsFragment fragment = (SettingsFragment)getFragmentManager().findFragmentByTag(SettingsFragment.TAG);
+            // checking for null
+            if (fragment == null) {
+                fragment = new SettingsFragment();
+                // if no frag exists create on
+
+
+                // Toast.makeText(this,lat,Toast.LENGTH_SHORT).show();
+                // Toast.makeText(this,lon,Toast.LENGTH_SHORT).show();
+
+                getFragmentManager().beginTransaction().addToBackStack(SettingsFragment.TAG).replace(R.id.displayView, fragment, SettingsFragment.TAG).commit();
+
+            } else {
+                // if a frag exists update it with the following txt items
+                getFragmentManager().beginTransaction().addToBackStack(SettingsFragment.TAG).replace(R.id.displayView, fragment, SettingsFragment.TAG).commit();
+            }
+        } else if (trueFalse == false){
+            trueFalse = true;
+            DisplayDataFragment fragment = (DisplayDataFragment)getFragmentManager().findFragmentByTag(DisplayDataFragment.TAG);
+            fragment = new DisplayDataFragment();
+            getFragmentManager().beginTransaction().addToBackStack(DisplayDataFragment.TAG).replace(R.id.displayView, fragment,DisplayDataFragment.TAG ).commit();
+        }
 
 
 
@@ -50,13 +84,16 @@ public class MainActivity extends AppCompatActivity implements onDataItemClickLi
 
 // Method for search function
     public void onButtonClick(View view){
+
+
+
         //sets a var for the edit text field
         searchText = (EditText) findViewById(R.id.searchTextField);
 
         // sets the city value to the serch text
         city = String.valueOf(searchText.getText());
         // user feed back of typed city
-       Toast.makeText(this, city, Toast.LENGTH_SHORT).show();
+
 
         // checks to see if online and proceed accordingly
         isOnline();
@@ -69,12 +106,19 @@ public class MainActivity extends AppCompatActivity implements onDataItemClickLi
         ConnectivityManager mgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = mgr.getActiveNetworkInfo();
 
+
+
         if (netInfo != null && netInfo.isConnectedOrConnecting()) {
             //Toast.makeText(this, "We're Connected", Toast.LENGTH_LONG).show();
 
+
+            GetAPIData getData  = new GetAPIData(this);
+
+            getData.runBackTask();
+            getData.passedCity = city;
             // if were connected function executes backtask method to pull from the API
-            backTask task = new backTask();
-            task.execute();
+            //backTask task = new backTask();
+            //task.execute();
 
             return true;
         } else{
@@ -148,6 +192,7 @@ public  void updateFrag(){
             // writeing the data
             FileOutputStream fileOutputStream = openFileOutput(FILENAME, MODE_PRIVATE);
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+
             objectOutputStream.writeObject(latLong);
             objectOutputStream.close();
 
@@ -194,115 +239,30 @@ public  void updateFrag(){
     }
 
 
+    @Override
+    public void ApiDataToPass(locationObject lattLong) {
+        latLong = lattLong;
+        updateFrag();
+       saveData(lattLong);
 
-    // method to pull the data from the API
-    public class backTask extends AsyncTask<String, Void, JSONObject> {
-
-        @Override
-        protected void onPreExecute() {
-           // Toast.makeText(MainActivity.this, "Started", Toast.LENGTH_LONG).show();
-
-        }
-
-        @Override
-        protected JSONObject doInBackground(String... params) {
-            // The URL string that points to our web resource.
-
-            // var to create the urlString
-            String state = "Delaware";
-            String address = "";
-            String urlString = "http://www.yaddress.net/api/address?AddressLine1=" + address + "&AddressLine2=" + city + "+" + state;
-
-
-
-
-            // Creating the URL object that points to our web resource.
-            URL url = null;
-
-            // Establish a connection to the resource at the URL.
-            HttpURLConnection connection = null;
-
-            String resourceData = "No Data";
-            try {
-                url = new URL(urlString);
-                connection = (HttpURLConnection) url.openConnection();
-                // Setting connection properties.
-                connection.setRequestMethod("GET");
-                connection.setConnectTimeout(10000); // 10 seconds
-                connection.setReadTimeout(10000); // 10 seconds
-                // Refreshing the connection.
-                connection.connect();
-
-                // Optionally check the status code. Status 200 means everything went OK.
-                int statusCode = connection.getResponseCode();
-
-                // Getting the InputStream with the data from our resource.
-                InputStream stream = connection.getInputStream();
-
-
-                // Reading data from the InputStream using the Apache library.
-                resourceData = IOUtils.toString(stream);
-
-
-                // Cleaning up our connection resources.
-                stream.close();
-                connection.disconnect();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            JSONObject apiData;
-
-            try{
-                apiData = new JSONObject(resourceData);
-
-
-            } catch(Exception e){
-                System.out.println("Cannot convert API resource to JSON");
-                apiData = null;
-            }
-
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            if (apiData != null) {
-
-                return apiData;
-            }else{
-                return null;
-            }
-
-        }
-
-        @Override
-        protected void onPostExecute(JSONObject s) {
-            //System.out.println(s);
-            try {
-
-                // var to hold the data that comes back
-                String longitude = s.getString("Longitude");
-                String latitude = s.getString("Latitude");
-
-                // creating the custom object from the returned data
-                 latLong = new locationObject(latitude, longitude);
-
-                //System.out.println(latLong.getLatitude());
-                //System.out.println(latLong.getLongitude());
-
-                // saving the data in the event their is no connection
-                saveData(latLong);
-
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            // updating the frag
-            updateFrag();
-        }
     }
 
+
+    public void deleteData(){
+
+
+        String[] data = {"Dover", "Smyrna", "Camden", "Newark", "Laurel"};
+
+        for (int i = 0; i < data.length; i++) {
+
+            String FILENAME = data[i] + ".txt";
+
+
+            deleteFile(FILENAME);
+
+        }
+
+Toast.makeText(this,"data deleted", Toast.LENGTH_SHORT).show();
+        System.out.println("test");
+    }
 }

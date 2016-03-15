@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <Preference
+        android:key="DELETE_USER_DATA"
+        android:summary="Deletes all the user data"
+        android:title="Delete data" />
+</PreferenceScreen>

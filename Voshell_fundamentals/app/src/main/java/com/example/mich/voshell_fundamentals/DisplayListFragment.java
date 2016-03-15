@@ -17,6 +17,7 @@ public class DisplayListFragment extends ListFragment {
 
     onDataItemClickListener listener;
 
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -34,6 +35,7 @@ public class DisplayListFragment extends ListFragment {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_expandable_list_item_1, data);
         setListAdapter(adapter);
+
     }
 
     @Override
@@ -45,6 +47,7 @@ public class DisplayListFragment extends ListFragment {
 
 
     }
+
 }
 
 
