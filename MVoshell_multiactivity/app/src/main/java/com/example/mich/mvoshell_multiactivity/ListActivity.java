@@ -4,24 +4,33 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 
 import java.util.ArrayList;
 
 public class ListActivity extends AppCompatActivity {
 
+
+
     private ArrayList<FavoritesClass> mFavorites;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        mFavorites = new ArrayList<FavoritesClass>();
         setContentView(R.layout.activity_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
         Intent mainIntent = getIntent();
         mFavorites = (ArrayList<FavoritesClass>) mainIntent.getSerializableExtra("Fav");
 
-    getFragmentManager().beginTransaction().replace(R.id.main_container,new ListFragment()).commit();
+
+
+        getFragmentManager().beginTransaction().replace(R.id.main_container,new ListFragment()).commit();
 
         ListFragment fragment = (ListFragment) getFragmentManager().findFragmentByTag(ListFragment.TAG);
         if (fragment == null){
@@ -43,6 +52,26 @@ public class ListActivity extends AppCompatActivity {
 //            }
 //        });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    public void sendBack(){
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("return", mFavorites);
+        setResult(RESULT_OK, returnIntent);
+        finish();
+    }
+
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        // Quit if back is pressed
+        if (keyCode == KeyEvent.KEYCODE_BACK)
+        {
+            sendBack();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
 }

@@ -48,9 +48,9 @@ public class ListFragment extends android.app.ListFragment {
     public void setUpList(ArrayList<FavoritesClass> fav) {
 
         ArrayList<FavoritesClass> favorite = fav;
-        int size = favorite.size() - 1;
+        int size = favorite.size();
         String favName;
-        for (int i = 0; i <= size ; i++) {
+        for (int i = 0; i < size ; i++) {
             FavoritesClass getFavName = favorite.get(i);
             favName = getFavName.getmName();
 

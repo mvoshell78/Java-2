@@ -8,6 +8,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements passBackFromFrag {
 
+
+    private static final int MAIN_REQUEST_CODE = 1234;
     public ArrayList<FavoritesClass> mFavorites;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,12 +29,24 @@ public class MainActivity extends AppCompatActivity implements passBackFromFrag 
 
 
         // adds the object to the array
+
         mFavorites.add(favorite);
 
-
          Intent intent = new Intent(this, ListActivity.class);
-         intent.putExtra("Fav", mFavorites);
-            startActivity(intent);
+        intent.putExtra("Fav", mFavorites);
+        //startActivity(intent);
+            startActivityForResult(intent, MAIN_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == MAIN_REQUEST_CODE || resultCode == RESULT_OK){
+
+            mFavorites = (ArrayList<FavoritesClass>) data.getSerializableExtra("return");
+        }
+
     }
 }
 
