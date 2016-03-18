@@ -44,6 +44,7 @@ public class MainActivityFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+
         // calls addButton function
         addButtonFunc();
 
@@ -73,6 +74,8 @@ public class MainActivityFragment extends Fragment {
                 favFoodField = (EditText) getActivity().findViewById(R.id.editText3);
 
 
+
+
                 // gets the string value of the textField
                 String name = String.valueOf(nameField.getText());
                 String color = String.valueOf(favColorField.getText());
@@ -80,29 +83,11 @@ public class MainActivityFragment extends Fragment {
 
                 fav = new FavoritesClass(name, color, food);
 
+                nameField.setText("");
+                favColorField.setText("");
+                favFoodField.setText("");
+
                 listener.passBack(fav);
-
-
-                // Toast.makeText(MainActivity.this, name, Toast.LENGTH_SHORT).show();
-
-//                // makes a new instance of the mFav arrayList
-//                mFavorites = new ArrayList<>();
-
-                // creates a new object from data
-
-
-//                // adds the object to the array
-   //            mFavorites.add(fav);
-
-//                // checks for null
-//                if (mFavorites != null) {
-//
-//                    FavoritesClass testFav = mFavorites.get(0);
-//                   String testName = testFav.getmName();
-//
-//                   System.out.println(testName);
-//
-//                }
 
             }
         });

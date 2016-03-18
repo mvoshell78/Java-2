@@ -24,6 +24,8 @@ public class FavoritesClass implements Serializable {
     }
 
 
+
+
     // Getter methods.
     public String getmName() { return mName;}
     public String getmFavoriteColor() { return mFavoriteColor;}

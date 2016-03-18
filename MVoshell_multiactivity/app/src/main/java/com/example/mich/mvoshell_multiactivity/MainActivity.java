@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements passBackFromFrag 
         if (requestCode == MAIN_REQUEST_CODE || resultCode == RESULT_OK){
 
             mFavorites = (ArrayList<FavoritesClass>) data.getSerializableExtra("return");
+
+
         }
 
     }

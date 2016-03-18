@@ -24,6 +24,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.mich.mvoshell_multiactivity.MainActivity" />
         </activity>
+        <activity
+            android:name=".DisplayActivity"
+            android:label="@string/title_activity_display"
+            android:parentActivityName=".ListActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.mich.mvoshell_multiactivity.ListActivity" />
+        </activity>
     </application>
 
 </manifest>
