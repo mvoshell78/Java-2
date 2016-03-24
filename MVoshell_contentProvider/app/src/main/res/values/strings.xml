@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Cities List</string>
+    <string name="title_activity_list">Select a City</string>
+    <string name="title_activity_display">Display Selected City</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
+</resources>
